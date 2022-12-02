@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\registrarEmpresas;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Middleware\Authenticate;
+use Illuminate\Support\Facades\Cookie;
 
 class registrarEmpresasController extends Controller
 {
@@ -36,6 +41,21 @@ class registrarEmpresasController extends Controller
      */
     public function store(Request $request)
     {
+        $validation= $request->validate([
+            'nombreEmpresa' => 'required | alpha | min:4 | max: 20',
+            'tipoNegocioE' => 'required | alpha | min:7 | max: 20',
+            'descripcion' => 'required| min:25|max: 250',
+            'horariosAtencion' => 'required',
+            'diasAtencion' => 'required | min:5 | max:50',
+            'numeroCelular' => 'required  | digits:8',
+            'numeroTelefono' => 'required | digits:7 ',
+            'direccion' => 'required | min:12 | max: 100',
+            'correoEmpresa' => 'required',
+            'password' => 'required |min:4| max:12' 
+
+
+        ]);
+
         $registrarEmpresas=new registrarEmpresas();
         $registrarEmpresas->nombreEmpresa = $request->nombreEmpresa;
         $registrarEmpresas->tipoNegocioE = $request->tipoNegocioE;
@@ -46,9 +66,11 @@ class registrarEmpresasController extends Controller
         $registrarEmpresas->numeroTelefono = $request->numeroTelefono;
         $registrarEmpresas->direccion = $request->direccion;
         $registrarEmpresas->correoEmpresa = $request->correoEmpresa;
+        $registrarEmpresas->password = Hash::make($request->password);
+
 
         $registrarEmpresas->save();
-
+        return[];
     }
 
     /**
@@ -93,6 +115,8 @@ class registrarEmpresasController extends Controller
         $registrarEmpresas->numeroTelefono = $request->numeroTelefono;
         $registrarEmpresas->direccion = $request->direccion;
         $registrarEmpresas->correoEmpresa = $request->correoEmpresa;
+        $registrarEmpresas->password = $request->password;
+
 
         $registrarEmpresas->save();
 
